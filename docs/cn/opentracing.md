@@ -49,7 +49,7 @@ jaeger由go实现，由uber开发，目前是[cloud native](https://www.cncf.io/
 grpc集成opentracing并不难，因为grpc服务端以及调用端分别声明了UnaryClientInterceptor以及UnaryServerInterceptor两个回调函数，因此只需要重写这两个回调函数，并在重写的回调函数中调用opentracing接口进行上报即可．</br>
 初始化时传入重写后的回调函数，同时二选一初始化jager或者zipkin，然后你就可以开启分布式调用链追踪之旅了．
 
-完整的代码见[grpc-wrapper](https://github.com/g4zhuj/grpc-wrapper)
+完整的代码见[grpc-wrapper](https://github.com/messixukejia/grpc-wrapper)
 
 #### 2.1 client端
 ```
@@ -153,5 +153,5 @@ jaeger服务主页信息
 [zipkin](https://zipkin.io/)</br>
 [jaeger](https://github.com/jaegertracing/jaeger)</br>
 [OpenTracing](http://opentracing.io/)</br>
-[grpc-wrapper](https://github.com/g4zhuj/grpc-wrapper)</br>
+[grpc-wrapper](https://github.com/messixukejia/grpc-wrapper)</br>
 

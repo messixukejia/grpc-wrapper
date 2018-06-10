@@ -2,15 +2,15 @@ package config
 
 import (
 	etcd "github.com/coreos/etcd/clientv3"
-	"github.com/g4zhuj/grpc-wrapper/plugins"
-	"github.com/g4zhuj/grpc-wrapper/server"
+	"github.com/messixukejia/grpc-wrapper/plugins"
+	"github.com/messixukejia/grpc-wrapper/server"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/naming"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	wrapper "github.com/g4zhuj/grpc-wrapper"
+	wrapper "github.com/messixukejia/grpc-wrapper"
 )
 
 //CliConfiguration config of client

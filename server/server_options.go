@@ -3,7 +3,7 @@ package server
 import (
 	"google.golang.org/grpc"
 
-	wrapper "github.com/g4zhuj/grpc-wrapper"
+	wrapper "github.com/messixukejia/grpc-wrapper"
 )
 
 //ServOption option of server

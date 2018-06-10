@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	wrapper "github.com/g4zhuj/grpc-wrapper"
+	wrapper "github.com/messixukejia/grpc-wrapper"
 )
 
 //MDReaderWriter metadata Reader and Writer

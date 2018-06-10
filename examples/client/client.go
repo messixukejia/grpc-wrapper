@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 
-	"github.com/g4zhuj/grpc-wrapper/config"
-	"github.com/g4zhuj/grpc-wrapper/plugins"
+	"github.com/messixukejia/grpc-wrapper/config"
+	"github.com/messixukejia/grpc-wrapper/plugins"
 	opentracing "github.com/opentracing/opentracing-go"
 	jaeger "github.com/uber/jaeger-client-go"
 	jaegerCfg "github.com/uber/jaeger-client-go/config"

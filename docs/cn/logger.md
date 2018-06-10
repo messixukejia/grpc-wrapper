@@ -31,7 +31,7 @@
 grpc 定义了grpclog包，并定义了LoggerV2的接口，因此，只要通过zap实现LoggerV2的接口，并通过SetLoggerV2(l LoggerV2)接口将实现的对象设置到grpclog包中，那么grpc将使用zap进行日志输出，同时上层应用也可以使用grpclog进行业务日志打印．
 
 #### 2.2 实现
-完整代码以及使用示例见 [grpc-wrapper](https://github.com/g4zhuj/grpc-wrapper)
+完整代码以及使用示例见 [grpc-wrapper](https://github.com/messixukejia/grpc-wrapper)
 
 ```
 type ZapLogger struct {

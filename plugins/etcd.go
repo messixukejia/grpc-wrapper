@@ -13,7 +13,7 @@ import (
 
 	etcd "github.com/coreos/etcd/clientv3"
 
-	wrapper "github.com/g4zhuj/grpc-wrapper"
+	wrapper "github.com/messixukejia/grpc-wrapper"
 )
 
 const (
