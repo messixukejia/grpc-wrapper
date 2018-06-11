@@ -20,6 +20,7 @@ package grpc
 
 import (
 	"google.golang.org/grpc/balancer"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/resolver"
 )
 
@@ -81,6 +82,7 @@ func (*lbManualResolver) Close() {}
 
 // NewAddress calls cc.NewAddress.
 func (r *lbManualResolver) NewAddress(addrs []resolver.Address) {
+	grpclog.Infof("manual newaddress add %v\n", addrs)
 	r.ccr.NewAddress(addrs)
 }
 

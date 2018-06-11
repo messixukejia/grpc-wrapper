@@ -79,7 +79,9 @@ func (b *dnsBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts 
 			rn: make(chan struct{}, 1),
 			q:  make(chan struct{}),
 		}
+		grpclog.Infof("build add %s\n", addr)
 		cc.NewAddress(addr)
+
 		go i.watcher()
 		return i, nil
 	}
@@ -133,6 +135,7 @@ func (i *ipResolver) watcher() {
 	for {
 		select {
 		case <-i.rn:
+			grpclog.Infof("ipresolver wathcer add %s\n", i.ip)
 			i.cc.NewAddress(i.ip)
 		case <-i.q:
 			return
@@ -188,6 +191,7 @@ func (d *dnsResolver) watcher() {
 		// Next lookup should happen after an interval defined by d.freq.
 		d.t.Reset(d.freq)
 		d.cc.NewServiceConfig(string(sc))
+		grpclog.Infof("grpc: dns watcher addr \n", result)
 		d.cc.NewAddress(result)
 	}
 }

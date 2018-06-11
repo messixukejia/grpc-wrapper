@@ -70,7 +70,6 @@ func NewJaegerTracer(serviceName string) (tracer opentracing.Tracer, closer io.C
 }
 
 func main() {
-
 	//set zap logger
 	logcfg := config.LoggerConfig{}
 	grpclog.SetLoggerV2(logcfg.NewLogger())

@@ -51,22 +51,25 @@ func NewJaegerTracer(serviceName string) (tracer opentracing.Tracer, closer io.C
 
 func main() {
 
-	//service discovery
-	cfg := config.RegistryConfig{
-		Endpoints: []string{"http://127.0.0.1:2379"},
-	}
-	r, err := cfg.NewResolver()
-	if err != nil {
-		grpclog.Errorf("new registry err %v \n", err)
-		return
-	}
-	b := grpc.RoundRobin(r)
-
 	//set logger
 	logcfg := config.LoggerConfig{
 		Level: "debug",
 	}
 	grpclog.SetLoggerV2(logcfg.NewLogger())
+
+	//service discovery
+	cfg := config.RegistryConfig{
+		Endpoints: []string{"http://127.0.0.1:2379"},
+	}
+	grpclog.Infof("begin to create etcd")
+	r, err := cfg.NewResolver()
+	if err != nil {
+		grpclog.Errorf("new registry err %v \n", err)
+		return
+	}
+	grpclog.Infof("end etcd")
+	b := grpc.RoundRobin(r)
+
 
 	dialOpts := []grpc.DialOption{grpc.WithTimeout(time.Second * 3), grpc.WithBalancer(b), grpc.WithInsecure(), grpc.WithBlock()}
 
@@ -79,6 +82,7 @@ func main() {
 		dialOpts = append(dialOpts, grpc.WithUnaryInterceptor(plugins.OpenTracingClientInterceptor(tracer)))
 	}
 
+	grpclog.Infof("begin to dial")
 	//time.Sleep(time.Second * 1)
 	conn, err := grpc.Dial(servName, dialOpts...)
 	if err != nil {

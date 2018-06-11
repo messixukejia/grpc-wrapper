@@ -260,12 +260,13 @@ func (bw *balancerWrapper) HandleSubConnStateChange(sc balancer.SubConn, s conne
 	return
 }
 
-func (bw *balancerWrapper) HandleResolvedAddrs([]resolver.Address, error) {
+func (bw *balancerWrapper) HandleResolvedAddrs(adds []resolver.Address, err error) {
 	bw.mu.Lock()
 	defer bw.mu.Unlock()
 	select {
 	case <-bw.startCh:
 	default:
+		grpclog.Warningf("Handle %v. Err: %v", adds, err)
 		close(bw.startCh)
 	}
 	// There should be a resolver inside the balancer.

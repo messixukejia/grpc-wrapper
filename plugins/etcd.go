@@ -49,6 +49,7 @@ func NewEtcdRegisty(cli *etcd.Client) wrapper.Registry {
 	}
 }
 
+//用于生成Watcher,监听注册中心中的服务信息变化
 func (er *etcdRegistry) Resolve(target string) (naming.Watcher, error) {
 	ctx, cancel := context.WithTimeout(context.TODO(), resolverTimeOut)
 	w := &etcdWatcher{
@@ -62,6 +63,7 @@ func (er *etcdRegistry) Resolve(target string) (naming.Watcher, error) {
 
 func (er *etcdRegistry) Register(ctx context.Context, target string, update naming.Update, opts ...wrapper.RegistryOptions) (err error) {
 	var upBytes []byte
+	//将服务信息序列化成json格式
 	if upBytes, err = json.Marshal(update); err != nil {
 		return status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -79,12 +81,15 @@ func (er *etcdRegistry) Register(ctx context.Context, target string, update nami
 		if err != nil {
 			return err
 		}
+		//Put服务信息到etcd,并设置key的值TTL,通过后面的KeepAlive接口
+		//对TTL进行续期,超过TTL的时间未收到续期请求,则说明服务可能挂了,从而清除服务信息
 		etcdOpts := []etcd.OpOption{etcd.WithLease(lsRsp.ID)}
 		key := target + "/" + update.Addr
 		_, err = er.cli.KV.Put(ctx, key, string(upBytes), etcdOpts...)
 		if err != nil {
 			return err
 		}
+		//保持心跳
 		lsRspChan, err := er.lsCli.KeepAlive(context.TODO(), lsRsp.ID)
 		if err != nil {
 			return err
@@ -111,8 +116,11 @@ func (er *etcdRegistry) Close() {
 	er.cli.Close()
 }
 
+//Next接口主要用于获取注册的服务信息,通过channel以及watch,当服务信息发生
+//变化时,Next接口会将变化返回给grpc框架从而实现服务信息变更.
 func (ew *etcdWatcher) Next() ([]*naming.Update, error) {
 	var updates []*naming.Update
+	//初次获取时,创建监听channel,并返回获取到的服务信息
 	if ew.watchChan == nil {
 		//create new chan
 		resp, err := ew.cli.Get(ew.ctx, ew.target, etcd.WithPrefix(), etcd.WithSerializable())
@@ -125,12 +133,15 @@ func (ew *etcdWatcher) Next() ([]*naming.Update, error) {
 				continue
 			}
 			updates = append(updates, &upt)
+			grpclog.Fatalf("etcd get upt is %v\n", upt)
 		}
+		//创建etcd的watcher监听target(服务名)的信息.
 		opts := []etcd.OpOption{etcd.WithRev(resp.Header.Revision + 1), etcd.WithPrefix(), etcd.WithPrevKV()}
 		ew.watchChan = ew.cli.Watch(context.TODO(), ew.target, opts...)
 		return updates, nil
 	}
 
+	//阻塞监听,服务发生变化时才返回给上层
 	wrsp, ok := <-ew.watchChan
 	if !ok {
 		err := status.Error(codes.Unavailable, "etcd watch closed")
@@ -155,6 +166,7 @@ func (ew *etcdWatcher) Next() ([]*naming.Update, error) {
 			continue
 		}
 		updates = append(updates, &upt)
+		grpclog.Fatalf("etcd watch upt is %v\n", upt)
 	}
 	return updates, nil
 }
