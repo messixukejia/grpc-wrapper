@@ -133,7 +133,7 @@ func (ew *etcdWatcher) Next() ([]*naming.Update, error) {
 				continue
 			}
 			updates = append(updates, &upt)
-			grpclog.Fatalf("etcd get upt is %v\n", upt)
+			grpclog.Infof("etcd get upt is %v\n", upt)
 		}
 		//创建etcd的watcher监听target(服务名)的信息.
 		opts := []etcd.OpOption{etcd.WithRev(resp.Header.Revision + 1), etcd.WithPrefix(), etcd.WithPrevKV()}
